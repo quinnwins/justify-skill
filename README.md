@@ -21,7 +21,7 @@ If there's a specific answer, the line stays and the answer is saved as its reas
 
 ## How well it works
 
-Tested with Claude Opus 5.5 at extra high effort on a 13,000-line app. It cut 1,245 lines, reworded 3,026, and found 461 real bugs along the way, each confirmed by a second check. Lower settings haven't been tested.
+Tested with Claude Opus 5.5 at extra high effort on a real app with 13,423 lines of words people see. It cut 1,245 of them, reworded 3,026, and found 461 real bugs along the way, each confirmed by a second check. Lower settings haven't been tested.
 
 ![Totals from that app, with its name hidden](docs/totals.png)
 
@@ -90,7 +90,7 @@ It skips tests, build output, tooling, migrations, config files, logs, and text 
 
 - It reads code, not the running app. Words that come from your database or an AI at run time aren't in the list.
 - It doesn't read Kotlin, Java, Go, Ruby, PHP, Vue, Svelte, or Markdown.
-- A big app can have 15,000 to 40,000 lines. A first full sweep takes a lot of AI time. Checking only what a change touches is cheap.
+- A big app can have 15,000 to 40,000 lines of words people see. A first full sweep takes a lot of AI time. Checking only what a change touches is cheap.
 - Some strings people never see still get picked up. Mark them "not shown", or skip their folder in `config.json`.
 
 ## Check that it works
