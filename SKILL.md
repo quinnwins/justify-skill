@@ -24,6 +24,8 @@ For each line, answer one question:
 
 Cut is the default. An AI asked to justify a line will always find a reason, and that reason is slop one level up. So a keep reason must name a concrete thing the person would do wrong or not know. `record` rejects vague keep reasons ("adds clarity", "builds trust", "improves the experience").
 
+Judge each sentence on its own, not the line as a whole. One needed fact doesn't carry the sentences around it. A line with one needed sentence and one padded sentence is a rewrite, not a keep.
+
 ## Bugs the words reveal
 
 Reading the code behind a line often shows the line isn't true. A number nothing measures, a step the next screen skips, an error that blames the wrong thing, a button that does something other than its label. That's a bug in the product, not just in the words.
@@ -35,6 +37,7 @@ Reading the code behind a line often shows the line isn't true. A number nothing
 
 ## What slop looks like
 
+- Tells people to use controls that are right there and already labeled. "Pick a day and a time" above a Day row and a Time of day row.
 - Says again what the screen already shows. A heading "Your messages" above a list titled Inbox.
 - Narrates the screen. "Here you can…", "Below you'll find…", "This is where…".
 - Cheers or soothes with no fact. "You're all set!", "Great choice!", "Don't worry."
@@ -42,6 +45,7 @@ Reading the code behind a line often shows the line isn't true. A number nothing
 - Filler. "Simply", "just", "easily", "quickly", "truly", "actually".
 - Writerly moves. Asides set off by long dashes, "not X, but Y", lists of three for rhythm, a colon before a reveal. A long dash that only separates two parts of a short label ("Hardcover — $39") is fine.
 - Errors that don't help. "Something went wrong" without what failed or what to do next.
+- Insider words. Terms the team or the trade uses that the reader wouldn't say themselves: "fulfillment", "intent", "flow", "SKU". Use the reader's word, or the one the button next to it already uses.
 - Two names for one thing. "Create story" on one screen and "New book" on another. Search the inventory before you keep a label.
 - Screen reader labels that don't match the visible words, or that describe looks instead of the action.
 
@@ -58,6 +62,7 @@ Reading the code behind a line often shows the line isn't true. A number nothing
 Use the product's own voice rules if the repo has them (AGENTS.md, CLAUDE.md, a style guide). Otherwise: short, everyday words, calm. Use the name people see for the product (the `product` in `.justify/config.json`), not an old internal name.
 
 - A rewrite passes the same test. Don't fix slop with different slop.
+- Fix the whole line. A flagged word is one problem the tool found, not the only one. Reread every sentence with the test before you stop.
 - Shorter, or the same length plus a missing fact. Never longer for style.
 - Match the wording other screens already use for the same thing.
 - Placeholders stay as they are: `{username}` in the inventory is a value filled in while the app runs. `{Save|Update}` means the code picks one of the two.
