@@ -91,4 +91,6 @@ test("build writes one page with the data inside", () => {
   const page = fs.readFileSync(path.join(data, "out", "copy-check.html"), "utf8");
   assert.ok(!page.includes("/*__JUSTIFY_DATA__*/null"), "data was not inlined");
   assert.ok(!page.includes("__PRODUCT__"), "product name was not filled in");
+  // Opened straight from disk, a page without this shows quote marks as garbage.
+  assert.match(page, /<meta charset="utf-8">/i);
 });
