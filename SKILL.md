@@ -37,8 +37,7 @@ Reading the code behind a line often shows the line isn't true. A number nothing
 
 ## What slop looks like
 
-- Tells people to use controls that are right there and already labeled. "Pick a day and a time" above a Day row and a Time of day row.
-- Says again what the screen already shows. A heading "Your messages" above a list titled Inbox.
+- Says again what the screen already shows. A heading "Your messages" above a list titled Inbox. Instructions to use controls that already have labels.
 - Narrates the screen. "Here you can…", "Below you'll find…", "This is where…".
 - Cheers or soothes with no fact. "You're all set!", "Great choice!", "Don't worry."
 - Hype. "Seamless", "effortless", "unlock", "elevate", "curated", "powerful", "magical".
