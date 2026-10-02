@@ -10,12 +10,20 @@ Justify finds every line of words your product shows people and asks one questio
 
 If there's a specific answer, the line stays and the answer is saved as its reason. If not, it's cut or rewritten. Cutting is the default, and vague reasons like "adds clarity" or "builds trust" are rejected.
 
+![Lines on the report, each with its verdict, reason and new words](docs/lines.png)
+
 ## What you get
 
 - **A verdict for every line**, saved in your repo at `.justify/verdicts.jsonl`. It's either keep, cut, rewrite or "not shown", with a reason.
 - **A one-page report** (`.justify/out/copy-check.html`) with every line grouped by screen, filters, and search. Open it in a browser or share it.
 - **New words get checked as you build.** After setup, Claude checks only the lines a change touches, so the list stays current.
 - **Mismatch finder.** It finds the same thing named two ways, like "Create story" on one screen and "New book" on another.
+
+## How well it works
+
+Tested with Claude Opus 5.5 at extra high effort on a 13,000-line app. It cut 1,245 lines, reworded 3,026, and found 461 real bugs along the way, each confirmed by a second check. Lower settings haven't been tested.
+
+![Totals from that app, with its name hidden](docs/totals.png)
 
 ## Install
 
@@ -61,7 +69,7 @@ What it saves in your repo:
 
 ```json
 {
-  "product": "Acme",
+  "product": "Example App",
   "exclude": ["^marketing/old/", "-backup\\."],
   "include": [],
   "platforms": { "^apps/staff/": "admin" },
