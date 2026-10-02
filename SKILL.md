@@ -117,6 +117,16 @@ Same steps with `--file` or `--platform`, one screen at a time. Then run `confli
 
 Helpers can split a sweep by file. Give each one this file's rubric and an example batch, have them write batches to their own scratch folder and validate with `--check`, then record their batches yourself. Two processes writing `verdicts.jsonl` at once can lose verdicts.
 
+### Reporting back
+
+End every run with a short summary for the person who asked:
+
+- How many lines you checked, and how many you'd keep, cut, rewrite, or marked not shown.
+- Each cut and rewrite, worst first: the current words, the new words (for a rewrite), and the reason. Past about 20, list the worst and point to the page for the rest.
+- Each bug from `bugs.md` found in this run, in one line each.
+- Where the page is.
+- That cuts and rewrites are only proposals until the product owner approves them.
+
 ### Applying approved verdicts
 
 Only when the product owner says so, and only the verdicts they approved.
