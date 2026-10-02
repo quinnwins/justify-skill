@@ -25,6 +25,8 @@ Tested with Claude Opus 5.5 at extra high effort on a real app with 13,423 lines
 
 ![Totals from that app, with its name hidden](docs/totals.png)
 
+**Bonus: it finds bugs.** Every line on screen makes a promise, and checking it means reading the code behind it. That's where bugs show up: a score that read 100% for everyone because nothing measured it, or a message telling people to save a receipt the next screen never showed. Claude lists them in `.justify/bugs.md` instead of fixing them on the spot, so you decide what to fix.
+
 ## Install
 
 You need Node 18 or newer and git. Python 3 is only needed for Python projects.
@@ -62,6 +64,7 @@ What it saves in your repo:
 .justify/
   config.json      product name, folders to skip, page link
   verdicts.jsonl   one verdict per line (commit this)
+  bugs.md          bugs found while reading the code behind the words
   out/             the built report (ignored by git)
 ```
 

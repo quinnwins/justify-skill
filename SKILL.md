@@ -24,6 +24,15 @@ For each line, answer one question:
 
 Cut is the default. An AI asked to justify a line will always find a reason, and that reason is slop one level up. So a keep reason must name a concrete thing the person would do wrong or not know. `record` rejects vague keep reasons ("adds clarity", "builds trust", "improves the experience").
 
+## Bugs the words reveal
+
+Reading the code behind a line often shows the line isn't true. A number nothing measures, a step the next screen skips, an error that blames the wrong thing, a button that does something other than its label. That's a bug in the product, not just in the words.
+
+- Write it in `.justify/bugs.md` (create it if missing): what the words promise, what the code really does, and the file and line.
+- Give the line its verdict as usual and mention the bug in the reason.
+- Don't fix bugs during a sweep. Fixing is separate work, after the product owner has seen the list.
+- In a big sweep, have a second helper try to disprove each bug in the code before it goes on the list. Keep only the ones that hold up.
+
 ## What slop looks like
 
 - Says again what the screen already shows. A heading "Your messages" above a list titled Inbox.
@@ -96,7 +105,7 @@ The scanner finds code on its own: every tracked `.ts .tsx .js .jsx .mjs .cjs .p
 ### After changing words in a feature or fix
 
 1. `todo --changed`.
-2. For each file, read the code around every line: where it shows, when, and to whom. Judge each line with the test.
+2. For each file, read the code around every line: where it shows, when, and to whom. Judge each line with the test. Note any bug the words reveal (see above).
 3. Write the batch to a file in your scratchpad and `record` it.
 4. If you wrote the line yourself and it fails, fix the code now, not just the verdict. Then build again.
 5. Commit `.justify/verdicts.jsonl` with the change.
