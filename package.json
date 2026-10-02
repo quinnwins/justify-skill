@@ -1,0 +1,16 @@
+{
+  "name": "justify-copy-check",
+  "version": "1.0.0",
+  "description": "A Claude skill that makes every line of words in your product earn its place.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/justify.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "typescript": "~5.6.3"
+  }
+}

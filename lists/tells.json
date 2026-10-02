@@ -1,0 +1,11 @@
+[
+  {"why": "Hype word", "pattern": "\\b(seamless(ly)?|effortless(ly)?|unlock(s|ing)?|elevat(e|es|ed|ing)|empower(s|ing)?|supercharg\\w*|revolutioni[sz]\\w*|game[- ]chang\\w*|next[- ]level|cutting[- ]edge|world[- ]class|best[- ]in[- ]class|state[- ]of[- ]the[- ]art|unleash\\w*|transformative|reimagin\\w*|curated|bespoke|unparalleled|unrivall?ed|robust|leverag\\w*|harness\\w*|streamlin\\w*|holistic|synerg\\w*|immersive|ultimate|powerful|the power of|delightful|magical)\\b"},
+  {"why": "Hype phrase", "pattern": "\\b(at your fingertips|all in one place|look no further|say goodbye to|whether you're|peace of mind|hassle[- ]free|stress[- ]free|hidden gem|in today's|more than just|it's not just|redefin\\w*|crafted|thoughtfully|meticulous(ly)?|like never before|take .{1,20} to the next level)\\b"},
+  {"why": "Filler", "pattern": "\\b(dive (in|into)|delve|embark|journey|simply|truly|genuinely|incredibly|seriously|literally|basically|actually)\\b"},
+  {"why": "Fake warmth", "pattern": "\\b(we've got you|got you covered|you're all set|rest assured|don't worry|no worries|we're here (to help|for you)|happy to help|we're so glad|we'd love to|we're excited|exciting news)\\b"},
+  {"why": "Cheerleading", "pattern": "\\b(oops|whoops|uh[- ]oh|yay|woo+hoo+|awesome|amazing|hooray|congrats|congratulations|nice work|great job|well done)\\b"},
+  {"why": "Sales opener", "pattern": "^(ready to (find|discover|start|begin|get started|take|explore|experience|unlock|elevate|transform)|discover (your|the|a|new)|experience the|welcome to the|introducing|meet the|get ready)\\b"},
+  {"why": "Exclamation mark", "pattern": "!"},
+  {"why": "Emoji", "pattern": "(?![©®™])\\p{Extended_Pictographic}"},
+  {"why": "Long dash", "pattern": "\\s—\\s"}
+]

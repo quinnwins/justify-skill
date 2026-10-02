@@ -1,0 +1,378 @@
+<title>__PRODUCT__ Copy Check</title>
+<style>
+/* Layout: one reading column. Summary strip, then filters, then screens as
+   collapsible sections, each a list of lines with their verdict. */
+:root {
+  --bg: #f4f3ef;
+  --surface: #ffffff;
+  --ink: #1b1813;
+  --muted: #5f5a50;
+  --line: #dcd7cc;
+  --gold: #8a6416;
+  --gold-fill: #e2b04a;
+  --gold-ink: #1d1505;
+  --blue: #1d5bb8;
+  --blue-fill: #1d5bb8;
+  --blue-ink: #ffffff;
+  --var-bg: #ece8de;
+  --focus: #1d5bb8;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0b09; --surface: #16130f; --ink: #f1ece2; --muted: #b0a796; --line: #332d25;
+    --gold: #d9ad5c; --gold-fill: #d9ad5c; --gold-ink: #1d1505;
+    --blue: #7fb0ff; --blue-fill: #5b95f0; --blue-ink: #08142b;
+    --var-bg: #2a241c; --focus: #7fb0ff; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0b09; --surface: #16130f; --ink: #f1ece2; --muted: #b0a796; --line: #332d25;
+  --gold: #d9ad5c; --gold-fill: #d9ad5c; --gold-ink: #1d1505;
+  --blue: #7fb0ff; --blue-fill: #5b95f0; --blue-ink: #08142b;
+  --var-bg: #2a241c; --focus: #7fb0ff; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--font-body);
+  padding-inline: 16px;
+  padding-block: 28px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 22px; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+header { display: grid; gap: 6px; }
+h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+h1 span { color: var(--gold); }
+.lede { margin: 0; color: var(--muted); max-width: 62ch; }
+.built { margin: 0; color: var(--muted); font-size: 13px; }
+.built code { font-family: var(--font-mono); font-size: 12px; }
+
+/* Summary: one proportional strip, then the counts under it. */
+.summary { display: grid; gap: 10px; }
+.bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--line); }
+.bar i { display: block; height: 100%; }
+.counts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 0; list-style: none; }
+.counts li { display: flex; align-items: baseline; gap: 7px; font-size: 14px; color: var(--muted); }
+.counts b { color: var(--ink); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.controls { display: grid; gap: 10px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); }
+.search { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chips .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-right: 4px; min-width: 52px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 11px; font-size: 13px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip small { font-variant-numeric: tabular-nums; opacity: 0.75; margin-left: 4px; }
+.result-note { margin: 0; color: var(--muted); font-size: 13px; }
+
+.area { display: grid; gap: 8px; }
+.area h2 { margin: 6px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+details.screen { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+details.screen > summary { list-style: none; cursor: pointer; padding: 12px 14px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+details.screen > summary::-webkit-details-marker { display: none; }
+details.screen > summary::before { content: "›"; color: var(--muted); transition: transform 0.15s; display: inline-block; width: 10px; }
+details.screen[open] > summary::before { transform: rotate(90deg); }
+.screen-name { font-weight: 650; min-width: 0; }
+.screen-file { font-family: var(--font-mono); font-size: 12px; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.screen-tally { margin-left: auto; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 10px; }
+.screen-tally .t-cut { color: var(--gold); font-weight: 600; }
+.screen-tally .t-rewrite { color: var(--gold); }
+
+ol.rows { list-style: none; margin: 0; padding: 0 14px 6px; display: grid; }
+.row { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 4px 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+.row .text { font-size: 15.5px; overflow-wrap: anywhere; }
+.row .text q { quotes: "“" "”"; }
+.row .meta { grid-column: 2; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.row .meta code { font-family: var(--font-mono); font-size: 12px; }
+.row .reason { grid-column: 2; font-size: 14px; color: var(--ink); }
+.row .new { grid-column: 2; font-size: 15px; padding-left: 10px; border-left: 3px solid var(--gold-fill); }
+.row .new .new-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); display: block; }
+.var { font-family: var(--font-mono); font-size: 0.82em; background: var(--var-bg); border-radius: 4px; padding: 0 4px; white-space: nowrap; }
+.flag { color: var(--gold); }
+.more { margin: 8px 14px 12px; }
+
+/* Verdict tags: always a word, never colour alone. Keep is solid blue, Cut
+   solid gold, Rewrite gold outline, the rest grey. */
+.tag { justify-self: start; align-self: start; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 6px; border: 1.5px solid transparent; white-space: nowrap; }
+.tag.keep { background: var(--blue-fill); color: var(--blue-ink); }
+.tag.cut { background: var(--gold-fill); color: var(--gold-ink); }
+.tag.rewrite { border-color: var(--gold-fill); color: var(--gold); }
+.tag.skip { border-color: var(--line); color: var(--muted); }
+.tag.open { border: 1.5px dashed var(--line); color: var(--muted); font-weight: 600; }
+.bar .keep { background: var(--blue-fill); }
+.bar .cut { background: var(--gold-fill); }
+.bar .rewrite { background: repeating-linear-gradient(135deg, var(--gold-fill) 0 4px, transparent 4px 8px); }
+.bar .skip { background: var(--muted); opacity: 0.45; }
+
+.empty { padding: 40px 0; text-align: center; color: var(--muted); }
+@media (max-width: 560px) {
+  h1 { font-size: 25px; }
+  /* On a phone the filters would cover half the screen if they stayed pinned. */
+  .controls { position: static; }
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row .meta, .row .reason, .row .new { grid-column: 1; }
+  .screen-tally { margin-left: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { details.screen > summary::before { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>__PRODUCT__ Copy <span>Check</span></h1>
+    <p class="lede">The words people see in __PRODUCT__, found in the code. A line stays only if someone would get something wrong, or miss something, without it.</p>
+    <p class="built" id="built"></p>
+  </header>
+
+  <section class="summary" aria-label="Totals">
+    <div class="bar" id="bar" role="img"></div>
+    <ul class="counts" id="counts"></ul>
+  </section>
+
+  <section class="controls" aria-label="Filters">
+    <input class="search" id="search" type="search" placeholder="Search words, screens or files" autocomplete="off">
+    <div class="chips" id="verdict-chips"><span class="label">Verdict</span></div>
+    <div class="chips" id="platform-chips"><span class="label">Where</span></div>
+    <p class="result-note" id="result-note" aria-live="polite"></p>
+  </section>
+
+  <main id="list"></main>
+</div>
+
+<script>
+const DATA = /*__JUSTIFY_DATA__*/null;
+
+const VERDICTS = [
+  { id: "change", label: "Cut or rewrite" },
+  { id: "all", label: "All" },
+  { id: "cut", label: "Cut" },
+  { id: "rewrite", label: "Rewrite" },
+  { id: "keep", label: "Keep" },
+  { id: "skip", label: "Not shown" },
+  { id: "open", label: "Not checked" },
+  { id: "flagged", label: "Flagged words" },
+];
+const PLATFORMS = [
+  { id: "all", label: "All" },
+  { id: "web", label: "Web" },
+  { id: "app", label: "Phone app" },
+  { id: "server", label: "Server" },
+  { id: "shared", label: "Shared" },
+  { id: "admin", label: "Admin" },
+];
+const TAG_TEXT = { keep: "Keep", cut: "Cut", rewrite: "Rewrite", skip: "Not shown", open: "Not checked" };
+const ROW_PAGE = 150;
+const AUTO_OPEN_LIMIT = 300;
+
+const state = load() || { verdict: "change", platform: "all", q: "" };
+const groups = (DATA && DATA.groups) || [];
+for (const g of groups) for (const it of g.items) it.v = it.v || "open";
+
+function load() {
+  try { return JSON.parse(localStorage.getItem("copy-check-filters")); } catch { return null; }
+}
+function save() {
+  try { localStorage.setItem("copy-check-filters", JSON.stringify(state)); } catch {}
+}
+
+function matchesVerdict(it) {
+  if (state.verdict === "all") return true;
+  if (state.verdict === "flagged") return it.g && it.g.length > 0;
+  if (state.verdict === "change") return it.v === "cut" || it.v === "rewrite";
+  return it.v === state.verdict;
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  const out = [];
+  for (const g of groups) {
+    if (state.platform !== "all" && g.platform !== state.platform) continue;
+    const groupHit = q && (g.where.toLowerCase().includes(q) || g.file.toLowerCase().includes(q));
+    const items = g.items.filter((it) => matchesVerdict(it) && (!q || groupHit || it.t.toLowerCase().includes(q) || (it.r || "").toLowerCase().includes(q) || (it.n || "").toLowerCase().includes(q)));
+    if (items.length) out.push({ g, items });
+  }
+  return out;
+}
+
+function countBy(list) {
+  const c = { total: 0, keep: 0, cut: 0, rewrite: 0, skip: 0, open: 0, flagged: 0 };
+  for (const it of list) { c.total++; c[it.v]++; if (it.g && it.g.length) c.flagged++; }
+  c.change = c.cut + c.rewrite;
+  return c;
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+// Shows {name} placeholders as small code pills so they read as "filled in later".
+function renderWords(target, text) {
+  const parts = text.split(/(\{[^{}]*\})/g);
+  for (const p of parts) {
+    if (!p) continue;
+    if (/^\{[^{}]*\}$/.test(p)) {
+      const inner = p.slice(1, -1);
+      target.append(el("span", "var", inner.includes("|") ? inner.split("|").join(" / ") : inner));
+    } else target.append(document.createTextNode(p));
+  }
+}
+
+function renderHeader() {
+  const m = DATA && DATA.meta;
+  const built = document.getElementById("built");
+  if (!m) { built.textContent = "No data yet. Run the justify build."; return; }
+  const when = new Date(m.builtAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  built.append("Built " + when + " from code version ");
+  built.append(el("code", null, m.commit));
+  built.append((m.dirty ? " plus edits not yet saved to git" : "") + " on " + m.branch + ".");
+
+  const all = groups.flatMap((g) => g.items);
+  const c = countBy(all);
+  const bar = document.getElementById("bar");
+  bar.setAttribute("aria-label", `${c.keep} keep, ${c.cut} cut, ${c.rewrite} rewrite, ${c.skip} not shown, ${c.open} not checked`);
+  for (const k of ["keep", "cut", "rewrite", "skip"]) {
+    if (!c[k]) continue;
+    const i = el("i", k);
+    i.style.width = (c[k] / c.total) * 100 + "%";
+    bar.append(i);
+  }
+  const counts = document.getElementById("counts");
+  const rows = [
+    [c.total, "lines"], [c.cut, "cut"], [c.rewrite, "rewrite"], [c.keep, "keep"], [c.skip, "not shown"], [c.open, "not checked"],
+  ];
+  for (const [n, label] of rows) {
+    const li = el("li");
+    li.append(el("b", null, n.toLocaleString()), document.createTextNode(" " + label));
+    counts.append(li);
+  }
+}
+
+function renderChips() {
+  const all = groups.flatMap((g) => g.items);
+  const vc = countBy(all);
+  const vWrap = document.getElementById("verdict-chips");
+  for (const v of VERDICTS) {
+    const b = el("button", "chip", v.label);
+    b.type = "button";
+    const n = v.id === "all" ? vc.total : vc[v.id];
+    b.append(el("small", null, n.toLocaleString()));
+    b.setAttribute("aria-pressed", String(state.verdict === v.id));
+    b.addEventListener("click", () => { state.verdict = v.id; sync(vWrap, b); render(); });
+    vWrap.append(b);
+  }
+  const pWrap = document.getElementById("platform-chips");
+  for (const p of PLATFORMS) {
+    if (p.id !== "all" && !groups.some((g) => g.platform === p.id)) continue;
+    const b = el("button", "chip", p.label);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(state.platform === p.id));
+    b.addEventListener("click", () => { state.platform = p.id; sync(pWrap, b); render(); });
+    pWrap.append(b);
+  }
+  const search = document.getElementById("search");
+  search.value = state.q;
+  let t;
+  search.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { state.q = search.value; render(); }, 120); });
+}
+
+function sync(wrap, active) {
+  for (const b of wrap.querySelectorAll(".chip")) b.setAttribute("aria-pressed", String(b === active));
+  save();
+}
+
+function renderRow(it) {
+  const li = el("li", "row");
+  li.append(el("span", "tag " + it.v, TAG_TEXT[it.v]));
+  const text = el("div", "text");
+  const q = el("q");
+  renderWords(q, it.t);
+  text.append(q);
+  li.append(text);
+  const meta = el("div", "meta");
+  meta.append(el("span", null, it.k));
+  meta.append(el("code", null, "line " + it.l.join(", ")));
+  if (it.g && it.g.length) meta.append(el("span", "flag", "Flagged: " + it.g.join(", ").toLowerCase()));
+  li.append(meta);
+  if (it.n) {
+    const n = el("div", "new");
+    n.append(el("span", "new-label", "New words"));
+    renderWords(n, it.n);
+    li.append(n);
+  }
+  if (it.r) li.append(el("div", "reason", it.r));
+  return li;
+}
+
+function fillRows(details, items) {
+  const ol = el("ol", "rows");
+  let shown = 0;
+  const more = el("button", "chip more");
+  more.type = "button";
+  const step = () => {
+    const next = items.slice(shown, shown + ROW_PAGE);
+    for (const it of next) ol.append(renderRow(it));
+    shown += next.length;
+    if (shown >= items.length) more.remove();
+    else more.textContent = `Show ${Math.min(ROW_PAGE, items.length - shown)} more of ${items.length - shown}`;
+  };
+  more.addEventListener("click", step);
+  details.append(ol, more);
+  step();
+}
+
+function render() {
+  save();
+  const list = document.getElementById("list");
+  list.replaceChildren();
+  const hits = filtered();
+  const total = hits.reduce((n, h) => n + h.items.length, 0);
+  const note = document.getElementById("result-note");
+  note.textContent = `${total.toLocaleString()} ${total === 1 ? "line" : "lines"} on ${hits.length.toLocaleString()} ${hits.length === 1 ? "screen or part" : "screens and parts"}`;
+  if (!hits.length) {
+    list.append(el("p", "empty", groups.length ? "Nothing matches these filters." : "No lines yet."));
+    return;
+  }
+  // Screens with the most to cut or rewrite come first in each area.
+  const weight = (h) => h.items.filter((it) => it.v === "cut" || it.v === "rewrite").length;
+  const byArea = new Map();
+  for (const h of hits) {
+    if (!byArea.has(h.g.area)) byArea.set(h.g.area, []);
+    byArea.get(h.g.area).push(h);
+  }
+  const autoOpen = total <= AUTO_OPEN_LIMIT;
+  for (const [area, items] of byArea) {
+    items.sort((a, b) => weight(b) - weight(a) || a.g.where.localeCompare(b.g.where));
+    const section = el("section", "area");
+    section.append(el("h2", null, `${area} · ${items.length}`));
+    for (const h of items) {
+      const d = el("details", "screen");
+      const s = el("summary");
+      s.append(el("span", "screen-name", h.g.where), el("span", "screen-file", h.g.file));
+      const c = countBy(h.items);
+      const tally = el("span", "screen-tally");
+      if (c.cut) tally.append(el("span", "t-cut", c.cut + " cut"));
+      if (c.rewrite) tally.append(el("span", "t-rewrite", c.rewrite + " rewrite"));
+      tally.append(el("span", null, c.total + (c.total === 1 ? " line" : " lines")));
+      s.append(tally);
+      d.append(s);
+      let filled = false;
+      const fill = () => { if (!filled) { filled = true; fillRows(d, h.items); } };
+      d.addEventListener("toggle", () => { if (d.open) fill(); });
+      if (autoOpen) { d.open = true; fill(); }
+      section.append(d);
+    }
+    list.append(section);
+  }
+}
+
+renderHeader();
+renderChips();
+render();
+</script>

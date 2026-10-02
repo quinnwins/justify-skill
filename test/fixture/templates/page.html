@@ -1,0 +1,14 @@
+<!doctype html>
+<title>{{ _("Your roof report") }}</title>
+{# a comment that says Hello there friend #}
+<h1>Hi {{ user.first_name|title }}, welcome back</h1>
+{% if saved %}Saved your changes{% else %}Nothing changed yet{% endif %}
+<button>{{ "Save" if new else "Update" }}</button>
+{% set page_title = "Billing and plans" %}
+<input type="submit" value="Send it">
+<a aria-label="Close the panel">x</a>
+<script>
+  const who = {{ user|tojson }};
+  {% if admin %}showToast("Admins can edit every page.");{% endif %}
+</script>
+<script type="application/ld+json">{"name": "Structured data is not shown"}</script>
