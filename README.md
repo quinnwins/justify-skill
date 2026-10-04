@@ -31,9 +31,13 @@ Tested with Claude Opus 5.5 at extra high effort on a real app with 13,423 lines
 
 You need Node 18 or newer and git. Python 3 is only needed for Python projects.
 
-1. Copy this folder to one of these:
-   - `~/.claude/skills/justify` to use it in all your projects.
-   - `<your repo>/.claude/skills/justify` to use it in one project.
+1. Download it into your Claude skills folder:
+
+   ```bash
+   git clone https://github.com/quinnwins/justify-skill.git ~/.claude/skills/justify
+   ```
+
+   That makes it work in all your projects. For one project only, put it in `<your repo>/.claude/skills/justify` instead.
 2. Inside that folder, run:
 
    ```bash
@@ -86,6 +90,7 @@ What it saves in your repo:
 - HTML and page templates: Jinja, Django, Liquid, Handlebars, EJS, and the scripts inside them.
 - Python messages: flash messages, errors, API messages, emails.
 - Swift string literals and Expo permission prompts.
+- English translation files, like `locales/en.json` or `locales/en/settings.json`.
 
 It skips tests, build output, tooling, migrations, config files, logs, and text sent to AI models.
 

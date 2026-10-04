@@ -102,7 +102,7 @@ Set `JUSTIFY_DIR=/some/scratch/folder` to keep everything out of the repo, for a
 3. `build` again until the areas look right. Spot-check a few files: are the lines really words people see, and is anything obvious missing?
 4. Commit `.justify/config.json`, `.justify/verdicts.jsonl` and `.justify/.gitignore` on the branch you are working on.
 
-The scanner finds code on its own: every tracked `.ts .tsx .js .jsx .mjs .cjs .py` file, HTML and page templates (Jinja, Django, Liquid, Handlebars, EJS), Swift, and Expo `app.json` permission prompts. It skips tests, build output, tooling, migrations and config files. A folder whose `package.json` uses React Native or Expo counts as the phone app.
+The scanner finds code on its own: every tracked `.ts .tsx .js .jsx .mjs .cjs .py` file, HTML and page templates (Jinja, Django, Liquid, Handlebars, EJS), Swift, Expo `app.json` permission prompts, and English translation files (`locales/en/*.json`, `locales/en.json` and similar). When a screen reads its words from a translation file, the verdict lives on the translation line. It skips tests, build output, tooling, migrations and config files. A folder whose `package.json` uses React Native or Expo counts as the phone app.
 
 ## Workflow
 

@@ -491,6 +491,9 @@ function scan() {
       for (const hit of scanHtml(rel)) addHit(hit, platform, areaFor(rel, platform), whereFor(rel));
     } else if (/\.swift$/.test(rel) && !/Package\.swift$/.test(rel)) {
       for (const hit of scanSwift(rel)) addHit(hit, "app", areaFor(rel, "app"), whereFor(rel));
+    } else if (LOCALE_FILE_RE.test(rel)) {
+      const platform = platformFor(rel);
+      for (const hit of scanLocaleFile(rel)) addHit(hit, platform, areaFor(rel, platform), hit.where);
     } else if (/(^|\/)app(\.config)?\.json$/.test(rel)) {
       for (const hit of scanPermissionPrompts(rel)) {
         addHit({ ...hit, kind: KIND.permission }, "app", "Phone app: permission pop-ups", "Permission pop-ups");
@@ -709,6 +712,39 @@ function scanSwift(rel) {
       hits.push({ file: rel, line: startLine, text: normalize(text), kind: KIND.screen });
     }
   }
+  return hits;
+}
+
+// Translation files (i18next, react-intl and similar). Only the English file is
+// read; every string in it is words people see. {{name}} reads as {name}.
+const LOCALE_FILE_RE = /(^|\/)(locales?|i18n|lang|langs|translations?|messages)\/(en|en[-_]US)(\/[^/]+)?\.json$/;
+
+function scanLocaleFile(rel) {
+  const source = fs.readFileSync(path.join(REPO, rel), "utf8");
+  const rows = source.split("\n");
+  const base = path.basename(rel, ".json");
+  const namespace = /^en([-_]US)?$/.test(base) ? "" : base;
+  const where = (namespace ? namespace.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/^\w/, (c) => c.toUpperCase()) : "Translations") + " (translations)";
+  const hits = [];
+  let from = 0;
+  const kindFor = (keyPath) =>
+    /a11y|accessibility/i.test(keyPath) ? KIND.reader
+    : /placeholder/i.test(keyPath) ? KIND.placeholder
+    : /error|failed|invalid/i.test(keyPath) ? KIND.error
+    : /alert/i.test(keyPath) ? KIND.alert
+    : /push|notification/i.test(keyPath) ? KIND.email
+    : KIND.screen;
+  const walk = (value, keyPath) => {
+    if (Array.isArray(value)) return value.forEach((v, i) => walk(v, `${keyPath}.${i}`));
+    if (value && typeof value === "object") return Object.entries(value).forEach(([k, v]) => walk(v, keyPath ? `${keyPath}.${k}` : k));
+    if (typeof value !== "string" || !/\p{L}/u.test(value)) return;
+    const needle = JSON.stringify(value).slice(1, -1);
+    let line = rows.findIndex((row, i) => i >= from && row.includes(needle));
+    if (line < 0) line = rows.findIndex((row) => row.includes(needle));
+    if (line >= 0) from = line;
+    hits.push({ file: rel, line: line + 1, text: normalize(value.replace(/\{\{\s*-?\s*([\w.]+)[^{}]*\}\}/g, "{$1}")), kind: kindFor(keyPath), where });
+  };
+  walk(JSON.parse(source), "");
   return hits;
 }
 
