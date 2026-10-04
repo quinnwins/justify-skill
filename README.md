@@ -108,3 +108,7 @@ npm test
 ```
 
 This builds a small test project and checks what the scanner finds.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

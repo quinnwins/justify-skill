@@ -2,6 +2,7 @@
   "name": "justify-copy-check",
   "version": "1.0.0",
   "description": "A Claude skill that makes every line of words in your product earn its place.",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
